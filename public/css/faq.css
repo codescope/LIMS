@@ -1,0 +1,94 @@
+html { height: 100%; width: 100%; margin: 0;padding:0;}
+body {
+/* font-family: "Trebuchet MS";  */
+    font-family: Verdana, Arial, Helvetica, sans-serif; 
+  max-width: 100%; 
+  min-height:100%;
+  margin: 0; padding: 0; border: 0;
+  font-size: 13px; line-height: 15px;}
+p { margin: 0px; }
+a { color: #bf572c; }
+a:hover { color: #000; }
+
+header{
+  padding-top: 50px;
+  position: relative;
+  margin-bottom: 32px;
+   
+}
+header h1{
+   font-family:fantasy,Arial,Helvetica,sans-serif;
+    position:fixed;
+    top:0;
+    margin-left: 40px;
+    padding:0;
+    z-index: 3;
+    font-size: 50px;
+}
+nav {
+font-family: Verdana, Arial, Helvetica, sans-serif; 
+  text-align: center;
+  background: #f5f5f0;
+  position: fixed;
+  padding: 18px;
+  top: 0;
+  width: 100%;
+  z-index: 2;    
+}
+nav a {
+  display: inline-block;
+  color: #cc0000;
+  padding: 15px 20px;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+nav a:hover{
+   color:#2e2e2e;
+   
+}
+
+.faq_container {
+/*	margin: 20px 0px 0px 20px;*/
+    margin: 0 auto;
+	padding: 0px 0px 5px 0px;
+	width: 700px;
+	background: url(../images/corkboard_tile.jpg) 0px 0px;
+    margin-bottom: 30px;
+}
+
+.faq {
+	margin: 0px 15px 35px 15px;
+	padding: 35px 15px 15px 70px;
+	position: relative;
+	background: #fff url(../images/note_top.jpg) no-repeat 0px 0px;
+}
+
+.faq_question { margin: 0px; padding: 0px 0px 5px 0px; display: inline-block; cursor: help; font-weight: bold; color: #1f4f71; }
+
+.faq_answer_container { height: 0px; overflow: hidden; padding: 0px; color: #bf572c; }
+.faq_answer { margin: 0px; padding: 0px; color: #bf572c; font-weight: normal; }
+
+.faq .letter_q { width: 40px; height: 50px; position: absolute; top: 20px; left: 25px; background: url(../images/q.png) 0px 0px; }
+.faq .letter_a { width: 43px; height: 40px; position: absolute; top: 42px; left: 23px; background: url(../images/a.png) 0px 0px; display: none;}
+
+#footer {
+  border-radius: 100px 100px 0 0;
+  height: 6vh;    
+  padding-top: 30px;  
+  color: #fff;
+  background: #2e2e2e;
+  text-align: center;    
+}
+.selected{
+    color:black;
+}
+
+#footer a {
+  color: #fff;
+}
+
+#footer a:hover {
+  color: #c52d2f;
+     
+}
