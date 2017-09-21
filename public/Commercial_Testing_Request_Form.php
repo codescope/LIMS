@@ -1,3 +1,130 @@
+<?php require_once("../includes/session.php"); ?>
+<?php require_once("../includes/db_connection.php"); ?>
+<?php require_once("../includes/functions.php"); ?>
+<?php require_once("../includes/validation_functions.php"); ?>
+<?php
+//initialize customer attributes
+$c_name = "";
+$city = "";
+$organization = "";
+$phone = "";
+$email = "";
+$address = null;
+//  Form Submission
+if(isset($_POST['cancel'])){
+    redirect_to("reception.php");
+}
+elseif (isset($_POST['submit'])) {
+  // Process the form
+  
+  // validations
+  $fields_with_max_lengths = array("cname" => 30,"city" => 30,"organization" => 50,"phone" => 50,"email" =>50,"address" => 300);
+  validate_max_lengths($fields_with_max_lengths);
+// $fields_with_max_values = array("no_of_tests" => 11);
+//  validate_max_lengths_for_integers($fields_with_max_values);
+
+  if (empty($errors)) {
+    // Perform Create
+        $sample_id=get_sample_id();
+        $customer_id=get_customer_id();
+        $expected_date = date("Y-m-d", strtotime($_POST['expected_date']));
+        $expected_date = mysql_prep($expected_date);
+        $c_name = mysql_prep($_POST["cname"]);
+        $city = mysql_prep($_POST["city"]);
+        $designation = mysql_prep($_POST["designation"]);
+        $organization = mysql_prep($_POST["organization"]);
+        $phone = mysql_prep($_POST["phone"]);
+        $email = mysql_prep($_POST["email"]);
+        $address = null;
+        if(isset($_POST["address"])) {
+            $address = mysql_prep($_POST["address"]);
+        }
+        $concerned_lab = mysql_prep($_POST["concerned_lab"]); 
+        $customer_type = mysql_prep($_POST["customer_type"]); 
+        $sample_type = mysql_prep($_POST["sample_type"]);
+        $lab = mysql_prep($_POST["lab"]);
+        $tests=$_POST['tests'];
+
+        if ($tests)
+        {
+            foreach ($tests as $test)
+            {
+                $all_tests[]=$test;
+            }
+        }
+      $no_of_tests = count($all_tests);
+      $tensile_strength_test=0;
+      $tear_strength_test=0;
+      $color_fastness_to_crocking_test=0;
+      $payment=0;
+      
+      if(in_array("tensile_strength",$all_tests)){
+          $tensile_strength_test=1;
+          $test = find_test_by_name("Tensile Strength");
+          if(isset($test)){
+              $payment +=$test["price"];
+          }
+      }
+      if(in_array("tear_strength",$all_tests)){
+          $tear_strength_test=1;
+          $test = find_test_by_name("Tearing Strength by Elmendorf Tester");
+          if(isset($test)){
+              $payment +=$test["price"];
+          }
+      }
+      if(in_array("color_fastness_to_crocking",$all_tests)){
+          $color_fastness_to_crocking_test=1;
+           $test = find_test_by_name("Color Fastness to Crocking");
+          if(isset($test)){
+              $payment +=$test["price"];
+          }
+      }
+      else{
+       // validation pending for other tests   
+      }
+
+      if($customer_type=="academic commercial"){
+          // 50 percent off for academic commercials
+          $payment = (50/100) * $payment;
+      }
+      
+        
+    $query  = "INSERT INTO commercial_customers (";
+    $query .= "  customer_id, name, city, designation, organization, phone, email, address ";
+    $query .= ") VALUES (";
+    $query .= "  '{$customer_id}', '{$c_name}', '{$city}', '{$designation}', '{$organization}', '{$phone}', '{$email}', '{$address}'";
+    $query .= ")";
+    $result = mysqli_query($connection, $query);
+
+    if ($result && mysqli_affected_rows($connection) == 1) {
+        // Now upto this point customer record inserted
+
+        $second_query = "INSERT INTO samples (";
+        $second_query .= "  sample_id, customer_id, expected_date, concerned_lab, sample_type, no_of_tests, lab, tensile_strength_test, tear_strength_test, color_fastness_to_crocking_test, type, payment, status ";
+        $second_query .= ") VALUES (";
+        $second_query .= "  '{$sample_id}', '{$customer_id}', '{$expected_date}', '{$concerned_lab}', '{$sample_type}', {$no_of_tests}, '{$lab}', {$tensile_strength_test}, {$tear_strength_test}, {$color_fastness_to_crocking_test}, '{$customer_type}', '{$payment}', 'submitted' ";
+        $second_query .= ")";
+        $second_result = mysqli_query($connection, $second_query);
+        if ($second_result && mysqli_affected_rows($connection) == 1) {
+//      $_SESSION["message"] = "User created.";
+            redirect_to("view_sample_record.php");
+        }
+        else{
+            $_SESSION["message"] = "Sample Submission failed.";
+        }
+    }
+    else {
+      $_SESSION["message"] = "Sample Submission failed.";
+    }
+  }  // if(empty($errors)
+
+} // if(isset($_POST['submit']))
+
+else {
+  // This is probably a GET request
+  
+} // end: if (isset($_POST['submit']))
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -19,7 +146,9 @@
               <a class="logoutbtn" href="logout.php" style="float:right; margin-right:25px;">log out</a>    
             </nav>
         </header>
-        <form action="" class="register">
+        <?php echo message(); ?>
+        <?php echo form_errors($errors); ?>
+        <form action="Commercial_Testing_Request_Form.php" class="register" method="post">
             <h1 id="first-heading">Commercial Testing Request Form</h1>
             <fieldset class="row1">
 <!--
@@ -27,17 +156,17 @@
                 </legend>
 -->
                 <p>
-                    <label>Date *
+                    <label for="submiited_date">Date *
                     </label>
-                    <input type="date" required/>
-                    <label>Expected Date *
+                    <input id="submitted_date" name="submitted_date" type="date"/>
+                    <label for="expected_date">Expected Date *
                     </label>
-                    <input type="text" required/>
+                    <input id="expected_date" name="expected_date" type="date" required/>
                 </p>
                 <p>
-                    <label>No. of tests*
+                    <label for="no_of_tests">No. of tests&nbsp;
                     </label>
-                    <input type="number"/ required>
+                    <input id="no_of_tests" name="no_of_tests" type="number" value=""/>
                     <label class="obinfo">* obligatory fields
                     </label>
                 </p>
@@ -46,51 +175,59 @@
                 <legend>Personal Details
                 </legend>
                 <p>
-                    <label>Name *
+                    <label for="cname">Name *
                     </label>
-                    <input type="text" class="long" required/>
+                    <input id="cname" name="cname" type="text" value="<?php echo $c_name;?>" class="long" required/>
                 </p>
                 <p>
-                    <label>City *
+                    <label for="city">City *
                     </label>
-                    <input type="text" maxlength="10" required/>
+                    <input id="city" name="city" type="text" value="<?php echo $city;?>" required/>
                 </p>
                 <p>
-                    <label>Designation *
+                    <label for="designation">Designation *
                     </label>
-                    <select required>
-                        <option disabled selected>Choose...
+                    <select id="designation" name="designation" required>
+                        <option selected value="">Choose...</option>
+                        <option value="CEO">CEO
                         </option>
-                        <option value="1">CEO
+                        <option value="G.M">GM
                         </option>
-                        <option value="2">GM
+                        <option value="Manager">Manager
                         </option>
-                        <option value="3">Manager
+                        <option value="Lecturar">Lecturar
                         </option>
-                        <option value="4">Lecturar
+                        <option value="Professor">Professor
                         </option>
-                        <option value="5">Professor
+                        <option value="Q.S">QS
                         </option>
-                        <option value="6">QS
+                        <option value="P.M">Project Manager
                         </option>
-                        <option value="7">Student
+                        <option value="Employee">Employee
+                        </option>
+                        <option value="Student">Student
                         </option>
                     </select>
                 </p>
                 <p>
-                    <label>Organization *
+                    <label for="organization">Organization *
                     </label>
-                    <input type="text" class="long"/ required>
+                    <input id="organization" name="organization" type="text" class="long" value="<?php echo $organization;?>" required/>
                 </p>
                 <p>
-                    <label>Phone *
+                    <label for="phone">Phone *
                     </label>
-                    <input type="text" class="long"/ required>
+                    <input id="phone" name="phone" type="text" class="long" value="<?php echo $phone;?>" required/>
                 </p>
                 <p>
-                    <label>Email *
+                    <label for="email">Email *
                     </label>
-                    <input class="long" type="email" required/>
+                    <input id="email" name="email" class="long" type="email" value="<?php echo $email;?>" required/>
+
+                </p>
+                 <p>
+                  <label for="address">Address&nbsp;&nbsp;</label>
+                  <textarea id="address" name="address" placeholder="Write address"><?php echo $address;?></textarea>
 
                 </p>
             </fieldset>
@@ -109,67 +246,86 @@
                  <p>
                     <label class="left">Concerned Lab *
                     </label>
-                    <input type="checkbox" value="" />
-                    <label class="labs">Physical</label>
-                    <input type="checkbox" value="" />
-                    <label class="labs">Chemical</label>
+                    <input id="physical" name="concerned_lab" type="radio" value="Physical" checked/>
+                    <label class="labs" for="physical">Physical</label>
+                    <input id="chemical" name="concerned_lab" type="radio" value="Chemical"/>
+                    <label class="labs" for="chemical">Chemical</label>
                    
                 </p>
-                <p class="chk"> <input type="checkbox" value="" required/>
-                    <label class="labs">Product dev</label>
-                    <input type="checkbox" value="" />
-                    <label class="labs">Analytical</label>
+                <p class="chk"> <input type="radio" id="product_dev" name="concerned_lab" value="Product dev" />
+                    <label for="product_dev" class="labs">Product dev</label>
+                    <input type="radio" id="analytical" name="concerned_lab" value="Analytical" />
+                    <label class="labs" for="analytical">Analytical</label>
                 </p>
                 
-                <p>
-                    <label>No. of samples *
+                 <p>
+                    <label for="customer_type">Customer Type*
                     </label>
-                    <input type="number" required/>  
-                </p>
-                <p>
-                    <label class="left-allign">Sample Types*
-                    </label>
-                    <select required>
-                        <option disabled selected="selected">Choose...
+                    <select id="customer_type" name="customer_type" required>
+                    <option selected value="">Choose...</option>
+                       
+                        <option value="commercial">Commercial
                         </option>
-                        <option value="1">Fabric
-                        </option>
-                        <option value="1">Fibre
-                        </option>
-                        <option value="1">Film
-                        </option>
-                        <option value="1">Liquid
-                        </option>
-                        <option value="1">Powder
-                        </option>
-                        <option value="1">Non-wooven
-                        </option>
-                        <option value="1">Nano-Fibres
-                        </option>
-                        <option value="1">Yarn
-                        </option>
-                        <option value="1">Coating
-                        </option>
-                    </select>
-                </p>
-                <p>
-                    <label>Lab *
-                    </label>
-                    <select>
-                    <option disabled selected>Choose...</option>
-                        <option value="1">Mechanical
-                        </option>
-                        <option value="2">Spectroscopy
-                        </option>
-                        <option value="3">Comfort
+                        <option value="academic commercial">Academic Commercial
                         </option>
                     </select>
                     
                 </p>
-                <p> <label>Tests*
+                
+                <p>
+                    <label class="left-allign" for="sample_type">Sample Types*
                     </label>
-                    <select id="last" required>
-                    <option disabled selected>Choose...</option>
+                    <select id="sample_type" name="sample_type" required>
+                        <option selected="selected" value="">Choose...
+                        </option>
+                        <option value="Fabric">Fabric
+                        </option>
+                        <option value="Fiber">Fiber
+                        </option>
+                        <option value="Film">Film
+                        </option>
+                        <option value="Liquid">Liquid
+                        </option>
+                        <option value="Powder">Powder
+                        </option>
+                        <option value="Non-wooven">Non-wooven
+                        </option>
+                        <option value="Nano-Fibres">Nano-Fibers
+                        </option>
+                        <option value="Yarn">Yarn
+                        </option>
+                        <option value="Coating">Coating
+                        </option>
+                        <option value="Garments">Garments
+                        </option>
+                        <option value="Miscelleneous">Miscelleneous
+                        </option>
+                    </select>
+                </p>
+                <p>
+                    <label for="lab">Lab *
+                    </label>
+                    <select id="lab" name="lab" required>
+                    <option selected value="">Choose...</option>
+                        <option value="mechanical">Mechanical
+                        </option>
+                        <option value="spectroscopy">Spectroscopy
+                        </option>
+                        <option value="comfort">Comfort
+                        </option>
+                    </select>
+                    
+                </p>
+                <p> <label for="last">Tests*
+                    </label>
+                    <select id="last" name="tests[]" multiple required>
+                    <option selected value="">Choose...</option>
+                        <option value="tensile_strength">Tensile Strength
+                        </option>
+                        <option value="tear_strength">Tear Strength
+                        </option>
+                        <option value="color_fastness_to_crocking">Color Fastness to Crocking
+                        </option>
                         <option value="1">Steam Strength of Jute bag
                         </option>
                         <option value="2">Breaking Strength by Strip method
@@ -180,20 +336,23 @@
                         </option>
                         <option value="5">Color Fastness to Crocking
                         </option>
+                        <option value="5">Color Fastness to Crocking
+                        </option>
+                       
                     </select>
                 </p>
-                <p> <label style="font-weight:600;">Payment *
+                <!--<p> <label style="font-weight:600;">Payment *
                     </label>
                     <input type="text" required/>
                     <button style="width:80px;height:22px;border-radius:15px;border: 1px solid #555;">Calculate</button>
-                </p>
+                </p>-->
             </fieldset>
-            <fieldset class="row4">
+            <fieldset class="row4" style="margin-top:-40px;">
                 <legend>Terms and Mailing
                 </legend>
                 <p class="agreement">
-                    <input type="checkbox" value=""/>
-                    <label>Send an email to customer</label>
+                    <input id="send_email" name="send_email" type="checkbox" value="" checked/>
+                    <label for="send_email">Send an email to customer</label>
                 </p>
                 <p class="agreement">
                     <input type="checkbox" value=""/>
@@ -201,8 +360,8 @@
                 </p>
                 
             </fieldset>
-            <div><button class="button">Cancel &raquo;</button></div>
-            <div><button class="button submitbtn" type="submit">Submit &raquo;</button></div>
+            <div><button class="button" type="button" onclick="location.href='reception.php';" name="cancel">Cancel &raquo;</button></div>
+            <div><button class="button submitbtn" type="submit" name="submit">Submit &raquo;</button></div>
             
         </form>
         <div id="footer">
@@ -211,7 +370,9 @@
   </div>
     </body>
 </html>
-
+<?php if (isset($connection)) {
+    mysqli_close($connection);
+} ?>
 
 
 

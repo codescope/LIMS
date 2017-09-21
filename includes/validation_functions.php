@@ -31,7 +31,21 @@ function validate_presences($required_fields) {
 function has_max_length($value, $max) {
 	return strlen($value) <= $max;
 }
-
+function has_max_value($value, $max) {
+    $int_value=(integer) $value;
+    return $int_value <= $max;
+         
+}
+function validate_max_lengths_for_integers($fields_with_max_lengths) {
+	global $errors;
+	// Expects an assoc. array
+	foreach($fields_with_max_lengths as $field => $max) {
+		$value = trim($_POST[$field]);
+	  if (!has_max_value($value, $max)) {
+	    $errors[$field] = fieldname_as_text($field) . " is too large";
+	  }
+	}
+}
 function validate_max_lengths($fields_with_max_lengths) {
 	global $errors;
 	// Expects an assoc. array

@@ -33,7 +33,77 @@
 		}
 		return $output;
 	}
-	
+    function unique_sample_id($sample_id){
+        global $connection;
+        $query  = "SELECT * ";
+        $query .= "FROM samples ";
+        $query .= "WHERE sample_id= '{$sample_id}' ";
+        $query .= "LIMIT 1";
+        $sample_set = mysqli_query($connection, $query);
+        confirm_query($sample_set);
+        if($sample = mysqli_fetch_assoc($sample_set)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    function unique_customer_id($customer_id){
+        global $connection;
+        $query  = "SELECT * ";
+        $query .= "FROM commercial_customers ";
+        $query .= "WHERE customer_id='{$customer_id}' ";
+        $query .= "LIMIT 1";
+        $customer_set = mysqli_query($connection, $query);
+        confirm_query($customer_set);
+        if($customer = mysqli_fetch_assoc($customer_set)) {
+            return false;
+        } else {
+            return true;
+        }
+
+    }
+    function generate_sample_id($length)
+      {
+          $chars = "1234567890";
+          $clen   = strlen( $chars )-1;
+          $id  = '';
+
+          for ($i = 0; $i < $length; $i++) {
+                  $id .= $chars[mt_rand(0,$clen)];
+          }
+       
+          return ($id);
+      }
+    function get_sample_id(){
+          do{
+            $sample_id  = date ("m");
+            $sample_id .= generate_sample_id(8);
+            $sample_id .= date ("y");
+          }while(!unique_sample_id($sample_id));
+        return $sample_id;
+        
+    }
+    function generate_customer_id($length)
+      {
+          $chars = "1234506789";
+          $clen   = strlen( $chars )-1;
+          $id  = '';
+
+          for ($i = 0; $i < $length; $i++) {
+                  $id .= $chars[random_int(0,$clen)];
+          }
+
+          return ($id);
+      }
+	 function get_customer_id(){
+        do {
+            $customer_id = date("d");
+            $customer_id .= date("m");
+            $customer_id .= generate_customer_id(8);
+        }while(!unique_customer_id($customer_id));
+        return $customer_id;
+        
+    }
 	function find_all_subjects($public=true) {
 		global $connection;
 		
@@ -47,23 +117,9 @@
 		confirm_query($subject_set);
 		return $subject_set;
 	}
+
 	
-	function find_pages_for_subject($subject_id, $public=true) {
-		global $connection;
-		
-		$safe_subject_id = mysqli_real_escape_string($connection, $subject_id);
-		
-		$query  = "SELECT * ";
-		$query .= "FROM pages ";
-		$query .= "WHERE subject_id = {$safe_subject_id} ";
-		if ($public) {
-			$query .= "AND visible = 1 ";
-		}
-		$query .= "ORDER BY position ASC";
-		$page_set = mysqli_query($connection, $query);
-		confirm_query($page_set);
-		return $page_set;
-	}
+	
 	
 	function find_all_admins() {
 		global $connection;
@@ -76,7 +132,8 @@
 		confirm_query($admin_set);
 		return $admin_set;
 	}
-function find_all_test_prices() {
+
+    function find_all_test_prices() {
 		global $connection;
 		
 		$query  = "SELECT * ";
@@ -86,6 +143,24 @@ function find_all_test_prices() {
 		confirm_query($price_set);
 		return $price_set;
 	}
+    function find_test_by_name($test_name) {
+		global $connection;
+		
+		$safe_test_name = mysqli_real_escape_string($connection, $test_name);
+		
+		$query  = "SELECT * ";
+		$query .= "FROM testing_charges ";
+		$query .= "WHERE nature_of_test = '{$safe_test_name}' ";
+		$query .= "LIMIT 1";
+		$test_set = mysqli_query($connection, $query);
+		confirm_query($test_set);
+		if($test = mysqli_fetch_assoc($test_set)) {
+			return $test;
+		} else {
+			return null;
+		}
+	}
+
     function find_test_by_id($test_id) {
 		global $connection;
 		

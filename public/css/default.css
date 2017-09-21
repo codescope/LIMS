@@ -319,8 +319,27 @@ form.register fieldset.row3 select{
 }
 form.register fieldset.row3 select#last{
     width: 230px;
+    height: 110px;
     
 }
+form.register fieldset.row2 textarea#address{
+    min-width: 230px;
+    max-width: 230px;
+    min-height: 50px;
+    max-height: 50px;
+    color: #505050;
+    border-radius: 6px;
+    outline: none;
+    padding: 5px;
+    border: 1px solid #E1E1E1;
+    
+}
+form.register fieldset.row2 textarea#address:focus{
+
+ border: 1px solid #555;
+    
+}
+
 .button
 {
     background: #abda0f url(../images/overlay.png) repeat-x;
@@ -356,6 +375,12 @@ form.register input[type=checkbox] {
     margin-top:4px;
     margin-left: 4px;
 }
+form.register input[type=radio] {
+    width:15px;
+    height: 14px;
+    margin-top:6px;
+    margin-left: 4px;
+}
 form.register select
 {
     border: 1px solid #E1E1E1;
@@ -365,11 +390,14 @@ form.register select
     color: #505050;
     margin-right:5px;
 }
+#designation{
+    width:170px;
+}
 form.register select.date
 {
     width: 40px;
 }
-input:focus, select:focus{
+input:focus, select:focus,textarea:focus{
     background-color: #efffe0;
 }
 p.info{
@@ -385,6 +413,7 @@ p.agreement label{
     text-align:left;
     margin-top:5px;
 }
+
 p.chk {
     margin-top: 0;
     margin-left: 120px;
@@ -406,5 +435,32 @@ p.chk {
          color: aqua; 
         cursor: pointer;
       }
+div.message {
+    border: 2px solid #8D0D19;
+    color: #8D0D19; font-weight: bold;
+    width: 33%;
+    background-color:coral;
+    margin: 8em auto 0 auto;
+    padding: 1em;
+    text-align: center;
+}
+/*for success messages*/
+.success{
 
+    color: #8D0D19; font-weight: bold;
+    width: 30%;
+    background-color:coral;
+    margin: 1.5em auto; padding: 1em;
+    text-align: center;
+    background-color:blanchedalmond;
+    color: green;
+    border:1px solid black;
+}
+/* errors */
+.error {
+    width: 40%;
+    color: #8D0D19; border: 2px solid #8D0D19;
+    margin: 8em auto 0 auto; padding: 1em;
+}
+.error ul { padding-left: 2em; }
 

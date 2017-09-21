@@ -31,9 +31,12 @@
               <li><a href="Academic_Testing_Request_Form.php">Record Academic Sample Data</a><li>
               <li><a href="#">View Statistics</a><li>
               <li><a href="logout.php">Logout</a></li>
-            </ul>    
-        </div>
+              <li>
     
+              </li>
+            </ul>
+   
+        </div>
     </div>
         <footer id="footer" style="border-radius:0;">
             <p style="text-align:center;"> &copy; <?php echo date("Y"); ?> <a href="login.php">Labs Information Management System</a>, All Rights Reserved.</p>
