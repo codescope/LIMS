@@ -118,8 +118,20 @@
 		return $subject_set;
 	}
 
-	
-	
+    function get_recent_customer(){
+        global $connection;
+
+        $query  = "SELECT * ";
+        $query .= "FROM commercial_customers ";
+        $query .= "WHERE id = (SELECT MAX(id) FROM commercial_customers);";
+        $customer_set = mysqli_query($connection, $query);
+        confirm_query($customer_set);
+        if($customer = mysqli_fetch_assoc($customer_set)) {
+            return $customer;
+        } else {
+            return null;
+        }
+    }
 	
 	function find_all_admins() {
 		global $connection;
@@ -161,19 +173,20 @@
 		}
 	}
 
-    function find_test_by_id($test_id) {
+    function get_customer_by_id($customer_id) {
 		global $connection;
 		
-		$safe_test_id = mysqli_real_escape_string($connection, $test_id);
+		$safe_customer_id = mysqli_real_escape_string($connection, $customer_id);
 		
 		$query  = "SELECT * ";
-		$query .= "FROM testing_charges ";
-		$query .= "WHERE id = {$safe_test_id} ";
+		$query .= "FROM commercial_customers, samples ";
+		$query .= "WHERE commercial_customers.customer_id=samples.customer_id ";
+        $query .= "AND commercial_customers.customer_id='{$safe_customer_id}' ";
 		$query .= "LIMIT 1";
-		$test_set = mysqli_query($connection, $query);
-		confirm_query($test_set);
-		if($test = mysqli_fetch_assoc($test_set)) {
-			return $test;
+		$customer_set = mysqli_query($connection, $query);
+		confirm_query($customer_set);
+		if($customer = mysqli_fetch_assoc($customer_set)) {
+			return $customer;
 		} else {
 			return null;
 		}
@@ -193,48 +206,7 @@
 			return null;
 		}
 	}
-	
-	function find_subject_by_id($subject_id, $public=true) {
-		global $connection;
-		
-		$safe_subject_id = mysqli_real_escape_string($connection, $subject_id);
-		
-		$query  = "SELECT * ";
-		$query .= "FROM subjects ";
-		$query .= "WHERE id = {$safe_subject_id} ";
-		if ($public) {
-			$query .= "AND visible = 1 ";
-		}
-		$query .= "LIMIT 1";
-		$subject_set = mysqli_query($connection, $query);
-		confirm_query($subject_set);
-		if($subject = mysqli_fetch_assoc($subject_set)) {
-			return $subject;
-		} else {
-			return null;
-		}
-	}
 
-	function find_page_by_id($page_id, $public=true) {
-		global $connection;
-		
-		$safe_page_id = mysqli_real_escape_string($connection, $page_id);
-		
-		$query  = "SELECT * ";
-		$query .= "FROM pages ";
-		$query .= "WHERE id = {$safe_page_id} ";
-		if ($public) {
-			$query .= "AND visible = 1 ";
-		}
-		$query .= "LIMIT 1";
-		$page_set = mysqli_query($connection, $query);
-		confirm_query($page_set);
-		if($page = mysqli_fetch_assoc($page_set)) {
-			return $page;
-		} else {
-			return null;
-		}
-	}
 	
 	function find_admin_by_id($admin_id) {
 		global $connection;

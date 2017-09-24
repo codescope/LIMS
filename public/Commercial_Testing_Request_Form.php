@@ -3,13 +3,35 @@
 <?php require_once("../includes/functions.php"); ?>
 <?php require_once("../includes/validation_functions.php"); ?>
 <?php
+// For populating previous records
+if(isset($_GET['prev_record'])){
+   $customer =get_recent_customer();
+   if(isset($customer)){
+       $c_name = $customer['name'];
+       $city = $customer['city'];
+       $organization = $customer['organization'];
+       $phone = $customer['phone'];
+       $email = $customer['email'];
+       $address = $customer['address'];
+   }
+   else{
+       $c_name = "";
+       $city = "";
+       $organization = "";
+       $phone = "";
+       $email = "";
+       $address = null;
+   }
+}
+else {
 //initialize customer attributes
-$c_name = "";
-$city = "";
-$organization = "";
-$phone = "";
-$email = "";
-$address = null;
+    $c_name = "";
+    $city = "";
+    $organization = "";
+    $phone = "";
+    $email = "";
+    $address = null;
+}
 //  Form Submission
 if(isset($_POST['cancel'])){
     redirect_to("reception.php");
@@ -18,8 +40,10 @@ elseif (isset($_POST['submit'])) {
   // Process the form
   
   // validations
-  $fields_with_max_lengths = array("cname" => 30,"city" => 30,"organization" => 50,"phone" => 50,"email" =>50,"address" => 300);
-  validate_max_lengths($fields_with_max_lengths);
+    $fields = array("cname","city","organization","phone","email","address");
+    validate_presences($fields);
+    $fields_with_max_lengths = array("cname" => 30,"city" => 30,"organization" => 50,"phone" => 50,"email" =>50,"address" => 300);
+    validate_max_lengths($fields_with_max_lengths);
 // $fields_with_max_values = array("no_of_tests" => 11);
 //  validate_max_lengths_for_integers($fields_with_max_values);
 
@@ -107,7 +131,7 @@ elseif (isset($_POST['submit'])) {
         $second_result = mysqli_query($connection, $second_query);
         if ($second_result && mysqli_affected_rows($connection) == 1) {
 //      $_SESSION["message"] = "User created.";
-            redirect_to("view_sample_record.php");
+            redirect_to("view_sample_record.php?customer_id=$customer_id");
         }
         else{
             $_SESSION["message"] = "Sample Submission failed.";
@@ -228,8 +252,8 @@ else {
                  <p>
                   <label for="address">Address&nbsp;&nbsp;</label>
                   <textarea id="address" name="address" placeholder="Write address"><?php echo $address;?></textarea>
-
-                </p>
+                 </p>
+                <a style="margin-left: 205px;" href="Commercial_Testing_Request_Form.php?prev_record=1">Insert the previous record</a>
             </fieldset>
             <fieldset class="row3">
                 <legend>Sample Information
@@ -264,7 +288,7 @@ else {
                     <select id="customer_type" name="customer_type" required>
                     <option selected value="">Choose...</option>
                        
-                        <option value="commercial">Commercial
+                        <option value="commercial" selected>Commercial
                         </option>
                         <option value="academic commercial">Academic Commercial
                         </option>
@@ -307,7 +331,7 @@ else {
                     </label>
                     <select id="lab" name="lab" required>
                     <option selected value="">Choose...</option>
-                        <option value="mechanical">Mechanical
+                        <option value="mechanical" selected>Mechanical
                         </option>
                         <option value="spectroscopy">Spectroscopy
                         </option>
@@ -319,7 +343,7 @@ else {
                 <p> <label for="last">Tests*
                     </label>
                     <select id="last" name="tests[]" multiple required>
-                    <option selected value="">Choose...</option>
+                        <option disabled>Choose...</option>
                         <option value="tensile_strength">Tensile Strength
                         </option>
                         <option value="tear_strength">Tear Strength
@@ -347,7 +371,7 @@ else {
                     <button style="width:80px;height:22px;border-radius:15px;border: 1px solid #555;">Calculate</button>
                 </p>-->
             </fieldset>
-            <fieldset class="row4" style="margin-top:-40px;">
+            <fieldset class="row4" style="margin-top:-25px;">
                 <legend>Terms and Mailing
                 </legend>
                 <p class="agreement">

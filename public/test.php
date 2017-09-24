@@ -3,6 +3,7 @@ use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\RFCValidation;
 require_once '../includes/config.php';
 
+
 try{
 //prepare email message
    /*  $message = (new Swift_Message())
