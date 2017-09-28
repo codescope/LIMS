@@ -86,7 +86,7 @@ if (isset($_POST['submit'])) {
     <div id="main">
        <div id="navigation">
            <ul>
-           <li><a href="test.php">&raquo; Main Page</a></li>
+           <li><a href="customer_sample_receipt.php">&raquo; Main Page</a></li>
            <br />
             <li><a href="manage_test_prices.php">Manage Users</a></li>   
            </ul>

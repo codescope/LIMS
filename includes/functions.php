@@ -292,7 +292,23 @@
 			$current_page = null;
 		}
 	}
-
+    function test_lists_for_emails($customer) {
+        $output = "";
+        if (isset($customer)) {
+            $output .= "<ul style=\"margin-left: 30px\">";
+            if ($customer['tensile_strength_test']) {
+                $output .= "<li>Tensile Strength</li>";
+            }
+            if ($customer['tear_strength_test']) {
+                $output .= "<li>Tear Strength</li>";
+            }
+            if ($customer['color_fastness_to_crocking_test']) {
+                $output .= "<li>Color Fastness to Crocking</li>";
+            }
+            $output .= "</ul>";
+        }
+        return $output;
+    }
 	// navigation takes 2 arguments
 	// - the current subject array or null
 	// - the current page array or null

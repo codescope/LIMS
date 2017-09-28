@@ -1,6 +1,6 @@
-<?php require_once("../includes/session.php"); ?>
-<?php require_once("../includes/db_connection.php"); ?>
-<?php require_once("../includes/functions.php"); ?>
+<?php require_once("../includes/session.php");?>
+<?php require_once("../includes/db_connection.php");?>
+<?php require_once("../includes/functions.php");?>
 <?php
 $tests = "";
 if(isset($_GET['customer_id'])){
@@ -85,7 +85,7 @@ else{
         </div> <!-- modal-dialog -->
     </div> <!-- modal -->
 
-<div class="container" style="margin-top: 90px;">
+<div class="container" style="margin-top: 90px;margin-bottom: 200px;">
 
     <h2 class="text-md-center mb-3">Sample Record Details</h2>
     <div class="row">
@@ -143,9 +143,22 @@ else{
         </div>
 
     </div>
+    <div class="row ">
+        <div class="col receipt_box">
+
+           <a class="btn btn-primary" href="receipt_content.php?customer_id=<?php echo $customer['customer_id']; ?>" target="_blank">View Receipt</a>
+            <a class="btn btn-primary" href="customer_sample_receipt.php?customer_id=<?php echo $customer['customer_id']; ?>" target="_blank">Print Receipt</a>
+        </div>
+    </div>
 
 </div><!-- content container -->
 <?php }?>
+
+<footer class="footer">
+        <p>&copy; <a href="http://www.ntu.edu.com" title="National textile University" target="_blank">NTU</a> | follow us on Twitter! <a href="https://twitter.com/NTUOfficial" title="Follow us on Twitter">@NTUOfficial</a>
+            <br>For additional information. please visit the main or about page</p>
+</footer>
+
 
 <script src="js/jquery.slim.min.js"></script>
 <script src="js/tether.min.js"></script>
@@ -155,4 +168,4 @@ else{
 </html>
 <?php if (isset($connection)) {
     mysqli_close($connection);
-} ?>
+}?>
