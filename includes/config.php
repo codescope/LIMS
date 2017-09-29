@@ -40,7 +40,7 @@ require_once $loader;
 
 $smtp_server = 'smtp.gmail.com';
 $username = 'mehar.abdullah13@gmail.com';
-$password = 'abdullah242';
+$password = '';
 
 /*
  * Email addresses for testing
