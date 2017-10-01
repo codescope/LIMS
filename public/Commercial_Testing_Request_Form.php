@@ -40,7 +40,7 @@ elseif (isset($_POST['submit'])) {
   // Process the form
   
   // validations
-    $fields = array("cname","city","organization","phone","email","address");
+    $fields = array("cname","city","organization","phone","email");
     validate_presences($fields);
     $fields_with_max_lengths = array("cname" => 30,"city" => 30,"organization" => 50,"phone" => 50,"email" =>50,"address" => 300);
     validate_max_lengths($fields_with_max_lengths);

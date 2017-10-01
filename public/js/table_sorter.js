@@ -8,7 +8,7 @@ $(document).ready(function(){
         type:'text'
     });*/
     
-    $('table#courses').tablesorter({
+    $('table#customers').tablesorter({
         
         sortList: [[0,0]],
         cssAsc: 'sorted asc',

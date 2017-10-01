@@ -4,51 +4,83 @@
 <?php
 $result = NULL;
 if(isset($_POST['sub'])){
+    $type = $_POST['type'];
+    $query  = "SELECT * ";
+    $query .= "FROM commercial_customers, samples ";
+    $query .= "WHERE commercial_customers.customer_id=samples.customer_id ";
+    $query .= "AND type='{$type}' ";
 
 
-        $st = $db->prepare('Select * from applications where program=? ORDER BY aggregiate DESC LIMIT 10');
-
-        $st->execute(array($_POST['uni']));
-        $all = $st->fetchAll();
-        if(!$all){
-            header("Location:" . rawurlencode("index.php") . "?err=" .
-                urlencode("Query Failed"));
-            exit();
+    if(!empty($_POST['starting_date']) && !empty($_POST['ending_date'])){
+        $starting_date = date("Y-m-d", strtotime($_POST['starting_date']));
+        $ending_date = date("Y-m-d", strtotime($_POST['ending_date']));
+        $query .= "AND creation_time BETWEEN '$starting_date' AND '$ending_date' + INTERVAL 1 DAY ";
+    }
+    elseif (!empty($_POST['starting_date'])){
+        $starting_date = date("Y-m-d", strtotime($_POST['starting_date']));
+        $query .= "AND creation_time >= '$starting_date' ";
+    }
+    elseif (!empty($_POST['ending_date'])){
+        $ending_date = date("Y-m-d", strtotime($_POST['ending_date']));
+        $query .= "AND creation_time <= '$ending_date' + INTERVAL 1 DAY ";
+    }
+    else{
+        // do nothing
+    }
+    if(isset($_POST["quantity"])){
+        $quantity =$_POST["quantity"];
+        if($_POST["quantity"]!=="all"){
+            $query .= "LIMIT {$quantity}";
         }
-        if(count($all)==0){
-            header("Location:" . rawurlencode("index.php") . "?err=" .
-                urlencode("Students Record not exists"));
-            exit();
-        }
-        else{
-            $result = "<table id=\"courses\" class=\"focus-highlight\">
+    }
+    $customer_set = mysqli_query($connection, $query);
+    confirm_query($customer_set);
+    if(mysqli_num_rows($customer_set)>0) {
+        $result = "<table id=\"customers\" class=\"focus-highlight\">
 				<thead>
 					<tr>
-                        <th>Applicant ID</th>
+                        <th>ID</th>
 						<th>Name</th>
-						<th>Father</th>
-						<th>Aggregiate</th>
+						<th>City</th>
+						<th>Organization</th>
+						<th>Designation</th>
+						<th>Phone</th>
+						<th>Email</th>
+						
 					</tr>
 				</thead>
 				<tbody>";
 
-            foreach($all as $rec){
-                $result  = $result . "<tr>";
-                $result  = $result . "<td>" . $rec['id'] ."</td>";
-                $result  = $result . "<td>" . $rec['name'] ."</td>";
-                $result  = $result . "<td>" . $rec['father'] ."</td>";
-                $result  = $result . "<td>" . $rec['aggregiate'] ."</td>";
-                $result  = $result . "</tr>";
-            }
-            $result  = $result . "</tbody>";
-            $result  = $result . " <tfoot>
+        foreach($customer_set as $cus){
+            $result  = $result . "<tr>";
+            $result  = $result . "<td>" . $cus['id'] ."</td>";
+            $result  = $result . "<td>" . $cus['name'] ."</td>";
+            $result  = $result . "<td>" . $cus['city'] ."</td>";
+            $result  = $result . "<td>" . $cus['organization'] ."</td>";
+            $result  = $result . "<td>" . $cus['designation'] ."</td>";
+            $result  = $result . "<td>" . $cus['phone'] ."</td>";
+            $result  = $result . "<td>" . $cus['email'] ."</td>";
+            $result  = $result . "</tr>";
+        }
+        $result  = $result . "</tbody>";
+        $result  = $result . " <tfoot>
 					<tr>
-						<td colspan=\"4\">
-							<p>Errors and Omissions are accepted. For more information, Visit the NTU main page <a href=\"http://ntu.edu.pk\" target=\"_blank\">NTU</a></p>
+						<td colspan=\"7\" >
+							<p>For more information, Visit the <a href=\"view_sample_record.php\" target=\"_blank\">View Customer Record</a> Page.</p>
 						</td>
 					</tr>
 				</tfoot>";
-        }
+    }
+    elseif (mysqli_num_rows($customer_set)==0){
+        redirect_to(rawurlencode("view_customers.php") . "?err=" .
+            urlencode("Students Record does not exists"));
+    }
+    else {
+        redirect_to(rawurlencode("view_customers.php") . "?err=" .
+            urlencode("Students Record does not exists"));
+    }
+
+
     }
 
 
@@ -69,34 +101,46 @@ if(isset($_POST['sub'])){
 </head>
 <body>
 <header>
-    <h1>Customers Record</h1>
+    <h1>Comercial Customers Record</h1>
 </header>
 <article>
-    <h2>Select the option to filter the merit list</h2>
-    <marquee>The first merit list is released while the second merit list will be released on Jan 29, 2017</marquee>
+    <h2>Select the option to filter the commercial customers</h2>
+    <marquee>This list contains both the record of commercial and academic customers</marquee>
     <div id="first_block">
         <form id="first_form" action="view_customers.php" method="post">
-
-            <label for="uni_sel">Select Course</label>
-            <select id="uni_sel" name="uni" required>
-                <option value="" selected>Select Course</option>
-                <option value="cs" >Computer Science</option>
-                <option value="soft" >Software Engineering</option>
-                <option value="tex">Textile Engineering</option>
-                <option value="pol">Polymer Engineering</option>
-                <option value="bba">BBA</option>
-                <option value="knit">Knitting</option>
-
+            <p>
+            <label for="uni_sel">Select Customers</label>
+            <select id="uni_sel" name="type" required>
+                <option value="" selected>Select Customer Type</option>
+                <option value="commercial">Commercial</option>
+                <option value="academic commercial" >Academic Commercial</option>
             </select>
 
-            <label for="uni_list">Select Merit List</label>
-            <select id="uni_list" name="list" required>
-                <option value="" selected>Select Merit List</option>
-                <option value="ist" >Ist Merit List</option>
-                <option value="sec" >2nd Merit List</option>
-                <option value="third">3rd Merit List</option>
+            <label for="uni_list">Select Quantity</label>
+            <select id="uni_list" name="quantity">
+                <option value="" selected disabled>Select Quantity</option>
+                <option value="1" >1</option>
+                <option value="10" >10</option>
+                <option value="25" >25</option>
+                <option value="50" >50</option>
+                <option value="100" >100</option>
+                <option value="200" >200</option>
+                <option value="300">300</option>
+                <option value="400" >400</option>
+                <option value="500" >500</option>
+                <option value="1000">1000</option>
+                <option value="2000">2000</option>
+                <option value="all">All</option>
 
             </select>
+            </p>
+            <p>
+            <label for="starting_date" id="start_label">Select Since</label>
+            <input type="date" name="starting_date" id="starting_date">
+
+            <label for="ending_date" id="end_label">Select Until</label>
+            <input type="date" name="ending_date" id="ending_date">
+            </p>
 
             <button type="submit" name="sub">Filter</button>
 
@@ -108,10 +152,19 @@ if(isset($_POST['sub'])){
         echo $result;
     }
     if(isset($_GET['err'])){
-        echo $_GET['err'];
+        echo "<div class=message>" . $_GET['err'] . "</div>";
     }
     ?>
 
 </article>
 </body>
 </html>
+<?php
+// 5. Close database connection
+if (isset($connection)) {
+    mysqli_close($connection);
+}
+if(isset($customer_set)){
+    mysqli_free_result($customer_set);
+}
+?>
