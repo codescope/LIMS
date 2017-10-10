@@ -33,6 +33,62 @@
 		}
 		return $output;
 	}
+	function test_notes($conditions){
+        if(!empty($conditions)){
+            $collect = explode("@",$conditions);
+            $output = "<div class=\"row pb-3\" style='padding-left: 100px'>";
+            $output .= "<div class=\"col-12 pb-2\"><h4 style=\"font-family: 'Caveat', cursive; color: #66512c\">Notes:</h4></div>";
+            $output .= "<div class=\"col-12\">";
+            $output .= "<ul>";
+            for($i=0;$i<count($collect); $i++){
+                $output .= "<li>";
+                $output .= $collect[$i];
+                $output .= "</li>";
+            }
+            $output .= "</ul>";
+            $output .= "</div>";
+            $output .= "</div>";
+            return $output;
+        }
+        else null;
+
+    }
+    function get_tear_test_by_id($sample_id) {
+        global $connection;
+
+        $safe_sample_id = mysqli_real_escape_string($connection, $sample_id);
+
+        $query  = "SELECT * ";
+        $query .= "FROM tear_strength, samples ";
+        $query .= "WHERE tear_strength.sample_id=samples.sample_id ";
+        $query .= "AND tear_strength.sample_id='{$safe_sample_id}' AND tear_strength.status= 'pending' ";
+        $query .= "LIMIT 1";
+        $sample_set = mysqli_query($connection, $query);
+        confirm_query($sample_set);
+        if($sample = mysqli_fetch_assoc($sample_set)) {
+            return $sample;
+        } else {
+            return null;
+        }
+    }
+    function get_tensile_test_by_id($sample_id) {
+        global $connection;
+
+        $safe_sample_id = mysqli_real_escape_string($connection, $sample_id);
+
+        $query  = "SELECT * ";
+        $query .= "FROM tensile_strength, samples ";
+        $query .= "WHERE tensile_strength.sample_id=samples.sample_id ";
+        $query .= "AND tensile_strength.sample_id='{$safe_sample_id}' AND tensile_strength.status= 'pending' ";
+        $query .= "LIMIT 1";
+        $sample_set = mysqli_query($connection, $query);
+        confirm_query($sample_set);
+        if($sample = mysqli_fetch_assoc($sample_set)) {
+            return $sample;
+        } else {
+            return null;
+        }
+    }
     function unique_sample_id($sample_id){
         global $connection;
         $query  = "SELECT * ";
@@ -104,19 +160,6 @@
         return $customer_id;
         
     }
-	function find_all_subjects($public=true) {
-		global $connection;
-		
-		$query  = "SELECT * ";
-		$query .= "FROM subjects ";
-		if ($public) {
-			$query .= "WHERE visible = 1 ";
-		}
-		$query .= "ORDER BY position ASC";
-		$subject_set = mysqli_query($connection, $query);
-		confirm_query($subject_set);
-		return $subject_set;
-	}
 
     function get_recent_customer(){
         global $connection;

@@ -115,6 +115,7 @@ else{
             <div class="col-3 font-weight-bold">Address</div>
             <div class="col-3"><?php echo $customer['address']?></div>
         </div>
+
         <div class="row pt-5 pb-3" style="padding-left: 150px;">
             <div class="col-3 font-weight-bold text-primary">Sample ID</div>
             <div class="col-3"><?php echo $customer['sample_id']?></div>
