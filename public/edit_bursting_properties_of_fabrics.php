@@ -4,11 +4,10 @@
 <?php require_once("../includes/validation_functions.php"); ?>
 <?php
 if(isset($_GET['sample_id'])) {
-    $sample = get_tear_test_by_id($_GET['sample_id']);
+    $sample = get_bursting_test_by_id($_GET['sample_id']);
     if (!$sample) {
         redirect_to("lab_manager.php");
     }
-
 }
 else{
     redirect_to("lab_manager.php");
@@ -16,17 +15,17 @@ else{
 //  Form Submission
 if(isset($_POST['cancel'])){
     $_SESSION["message"] = "Sample Test information is not updated";
-    redirect_to("view_sample_detail.php?sample_id={$sample['sample_id']}&test_name=tear_test");
+    redirect_to("view_sample_detail.php?sample_id={$sample['sample_id']}&test_name=bursting_test");
 }
 elseif (isset($_POST['submit'])) {
     // Process the form
 
     // validations
-    $fields = array("test_standard","temperature","humidity","mean_strength_wrap","mean_percent_elongation_wrap","mean_strength_weft","mean_percent_elongation_weft");
+    $fields = array("sample_id","sample_type","test_standard","temperature","humidity","mean_busting_strength","mean_height","test_area","volume_increase_rate","time_to_burst");
     validate_presences($fields);
     $fields_with_max_lengths = array("sample_id" => 20,"sample_type" => 15,"sample_description" => 1500,"test_standard" => 400,"temperature" =>40,"humidity" => 40,
-        "mean_strength_wrap"=>80,"mean_strength_wrap_unit"=>10,"mean_percent_elongation_wrap"=>80,"mean_strength_weft"=>80,"mean_strength_weft_unit"=>10,"mean_percent_elongation_weft"=>80,
-        "first_cv"=>80,"second_cv"=>80,"third_cv"=>80,"fourth_cv"=>80);
+        "mean_busting_strength"=>80,"mean_height"=>80,"test_area"=>80,"volume_increase_rate"=>80,"time_to_burst"=>80,
+        "first_cv"=>80,"second_cv"=>80,"third_cv"=>80,"fourth_cv"=>80,"fifth_cv"=>80);
     validate_max_lengths($fields_with_max_lengths);
 // $fields_with_max_values = array("no_of_tests" => 11);
 //  validate_max_lengths_for_integers($fields_with_max_values);
@@ -39,32 +38,33 @@ elseif (isset($_POST['submit'])) {
         $test_standard = mysql_prep($_POST["test_standard"]);
         $temperature = mysql_prep($_POST["temperature"]);
         $humidity = mysql_prep($_POST["humidity"]);
-        $mean_strength_wrap = mysql_prep($_POST["mean_strength_wrap"]);
-        $mean_strength_wrap_unit = mysql_prep($_POST["mean_strength_wrap_unit"]);
-        $mean_strength_wrap = $mean_strength_wrap . " ".$mean_strength_wrap_unit;
-        $mean_percent_elongation_wrap = mysql_prep($_POST["mean_percent_elongation_wrap"]);
-        $mean_strength_weft = mysql_prep($_POST["mean_strength_weft"]);
-        $mean_strength_weft_unit = mysql_prep($_POST["mean_strength_weft_unit"]);
-        $mean_strength_weft = $mean_strength_weft . " ".$mean_strength_weft_unit;
-        $mean_percent_elongation_weft = mysql_prep($_POST["mean_percent_elongation_weft"]);
+        $mean_busting_strength = mysql_prep($_POST["mean_busting_strength"]);
+        $mean_busting_strength_unit = mysql_prep($_POST["mean_busting_strength_unit"]);
+        $mean_busting_strength = $mean_busting_strength . " ".$mean_busting_strength_unit;
+        $mean_height = mysql_prep($_POST["mean_height"]);
+        $mean_height_unit = mysql_prep($_POST["mean_height_unit"]);
+        $mean_height = $mean_height . " ".$mean_height_unit;
+        $test_area = mysql_prep($_POST["test_area"]);
+        $test_area = $test_area . " cm<sup>2</sup>";
+        $volume_increase_rate = mysql_prep($_POST["volume_increase_rate"]);
+        $volume_increase_rate = $volume_increase_rate . " kg/cm<sup>3</sup>";
+        $time_to_burst = mysql_prep($_POST["time_to_burst"]);
+        $time_to_burst = $time_to_burst . " secs";
         $first_cv = mysql_prep($_POST["first_cv"]);
         $second_cv = mysql_prep($_POST["second_cv"]);
         $third_cv = mysql_prep($_POST["third_cv"]);
         $fourth_cv = mysql_prep($_POST["fourth_cv"]);
+        $fifth_cv = mysql_prep($_POST["fifth_cv"]);
         $conditions = $_POST["conditions"];
 
-        $test_conditions = "";
-        if($test_standard=="ISO 13937-1 (Eimendorf)"){
-            $test_conditions = "13937-1 2000, 5 samples tested" . "@";
+        $test_conditions="";
+        if($test_standard=="ASTM D3786"){
+            $test_conditions = "Tested as directed in test method D3786 using Gatelab hydraulic inflated diaphragm bursting tester";
         }
-        elseif ($test_standard=="ISO 13937-3 (Wing shaped single tear method)"){
-            $test_conditions = "ISO 13937-3 Wing shaped single tear method" . "@";
-        }
+
         else{
 
         }
-        $test_conditions="Specimen was tested as directed in ASTM D1424, without wetting, test performed at
-        Gateslab Elmendrof tearing strength tester, maximum range (128N)";
         if ($conditions)
         {
             foreach ($conditions as $condition)
@@ -80,8 +80,8 @@ elseif (isset($_POST['submit'])) {
         }
 
 
-        $query  = "UPDATE tear_strength ";
-        $query .= "SET status='pending', sample_description='{$sample_description}', test_standard='{$test_standard}', temperature='{$temperature}', humidity='{$humidity}', mean_strength_wrap='{$mean_strength_wrap}', mean_percent_elongation_wrap='{$mean_percent_elongation_wrap}', mean_strength_weft='{$mean_strength_weft}', mean_percent_elongation_weft='{$mean_percent_elongation_weft}', first_cv='{$first_cv}', sec_cv='{$second_cv}', third_cv='{$third_cv}', fourth_cv='{$fourth_cv}', test_conditions='{$test_conditions}' ";
+        $query  = "UPDATE bursting_properties_of_fabrics ";
+        $query .= "SET status='pending', sample_description='{$sample_description}', test_standard='{$test_standard}', temperature='{$temperature}', humidity='{$humidity}', mean_burst_strength='{$mean_busting_strength}', mean_burst_height='{$mean_height}', test_area='{$test_area}',volume_increase_rate='{$volume_increase_rate}',time_to_burst='{$time_to_burst}',first_cv='{$first_cv}', sec_cv='{$second_cv}',third_cv='{$third_cv}',fourth_cv='{$fourth_cv}',fifth_cv='{$fifth_cv}' ,test_conditions='{$test_conditions}' ";
         $query .= "WHERE sample_id='{$sample_id}' LIMIT 1";
         $result = mysqli_query($connection, $query);
 
@@ -89,11 +89,11 @@ elseif (isset($_POST['submit'])) {
         if ($result && mysqli_affected_rows($connection) == 1) {
 
             $_SESSION["message"] = "Sample Test information updated.";
-            redirect_to("view_sample_detail.php?sample_id={$sample['sample_id']}&test_name=tear_test");
+            redirect_to("view_sample_detail.php?sample_id={$sample['sample_id']}&test_name=bursting_test");
         }
         elseif($result){
             $_SESSION["message"] = "Sample Test information is not updated.";
-            redirect_to("view_sample_detail.php?sample_id={$sample['sample_id']}&test_name=tear_test");
+            redirect_to("view_sample_detail.php?sample_id={$sample['sample_id']}&test_name=bursting_test");
 
         }
         else{
@@ -109,6 +109,7 @@ else {
 
 } // end: if (isset($_POST['submit']))
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -118,8 +119,25 @@ else {
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/test_styles.css">
-    <title>Edit Tear Strength Testing Form</title>
+    <title>Edit Bursting Properties Testing Form</title>
+    <style>
+        .pow{
+            position:absolute;
+            top:4px;
+            left: 30px;
+            font-size:0.6em;
+            font-weight: bold;
+        }
+        .sec_pow{
+            position:absolute;
+            top:4px;
+            left: 52px;
+            font-size:0.6em;
+            font-weight: bold;
+        }
+    </style>
 </head>
+
 <body>
 
 <nav class="navbar navbar-inverse bg-primary navbar-toggleable-sm">
@@ -144,9 +162,9 @@ else {
 
 <div class="container mt-4">
 
-    <h2 class="text-md-center mb-3">Tear Testing Result Form</h2>
+    <h2 class="text-md-center mb-3">Bursting Properties Testing Form</h2>
 
-    <form action="edit_tear_strength_test.php?sample_id=<?php echo $sample['sample_id']; ?>" method="post">
+    <form action="edit_bursting_properties_of_fabrics.php?sample_id=<?php echo $sample['sample_id']; ?>" method="post">
 
         <fieldset class="form-group mb-0">
             <legend>Sample Information</legend>
@@ -160,34 +178,12 @@ else {
                     <input class="form-control" type="text" id="sample_type" name="sample_type" placeholder="Enter Sample Type" value="<?php echo $sample['sample_type']; ?>" readonly>
                 </div>
             </div>
-            <!--<div class="form-group row mb-0">
-                <div class="form-group col-6">
-                    <label class="form-control-label" for="date_received">Date Received</label>
-                    <input class="form-control" type="date" id="date_received">
-                </div>
-                <div class="form-group col-6">
-                    <label class="form-control-label" for="date_delievered">Date Delievered</label>
-                    <input class="form-control" type="date" id="date_delievered">
-                </div>
-            </div>     -->
-
 
             <div class="form-group">
                 <label class="form-control-label sr-only" for="sample_description">Sample Description</label>
                 <textarea class="form-control" rows="3" id="sample_description" name="sample_description" placeholder="Enter Sample Description"><?php echo $sample['sample_description']; ?></textarea>
             </div>
 
-            <!-- <div class="form-group row mb-0">
-                 <div class="form-group col-6">
-                   <label class="form-control-label" for="client">Client</label>
-                   <input class="form-control" type="text" id="client" placeholder="Enter Client">
-                 </div>
-
-                 <div class="form-group col-6">
-                    <label class="form-control-label" for="client_ref">Client Ref.</label>
-                    <input class="form-control" type="text" id="client_ref" placeholder="Enter Client Reference">
-                 </div>
-             </div> form-group -->
         </fieldset><!-- fieldset -->
 
         <fieldset class="form-group mb-0">
@@ -197,9 +193,9 @@ else {
                 <label class="form-control-label" for="test_standard">Test Standard</label>
                 <select class="form-control" id="test_standard" name="test_standard" required>
                     <option value="">Choose standard...</option>
-                    <option value="ISO 13937-1 (Eimendorf)" <?php if($sample['test_standard']==="ISO 13937-1 (Eimendorf)") echo "selected";?>>ISO 13937-1 (Eimendorf)</option>
-                    <option value="ISO 13937-3 (Wing shaped single tear method)" <?php if($sample['test_standard']==="ISO 13937-3 (Wing shaped single tear method)") echo "selected";?>>ISO 13937-3 (Wing shaped single tear method)</option>
-                    <option value="ASTM D 1424" <?php if($sample['test_standard']==="ASTM D 1424") echo "selected";?>>ASTM D 1424</option>
+                    <option value="ISO 13938-1, 1999" <?php if($sample['test_standard']==="ISO 13938-1, 1999") echo "selected"; ?>>ISO 13938-1, 1999
+                    </option>
+                    <option value="ASTM D3786" <?php if($sample['test_standard']==="ASTM D3786") echo "selected"; ?>>ASTM D3786</option>
                 </select>
             </div>
 
@@ -222,11 +218,20 @@ else {
             </div>
         </fieldset>
         <?php
-        if($sample['mean_strength_wrap']){
-            list($mean_str_warp,$mean_str_warp_unit)= explode(' ',$sample['mean_strength_wrap']);
+        if($sample['mean_burst_strength']){
+            list($mean_burst_strength,$mean_burst_strength_unit)= explode(' ',$sample['mean_burst_strength']);
         }
-        if($sample['mean_strength_weft']){
-            list($mean_str_weft,$mean_str_weft_unit)= explode(' ',$sample['mean_strength_weft']);
+        if($sample['mean_burst_height']){
+            list($mean_burst_height,$mean_burst_height_unit)= explode(' ',$sample['mean_burst_height']);
+        }
+        if($sample['test_area']){
+            list($test_area_value,$test_area_unit)= explode(' ',$sample['test_area']);
+        }
+        if($sample['volume_increase_rate']){
+            list($volume_increase_rate_value,$volume_increase_rate_unit)= explode(' ',$sample['volume_increase_rate']);
+        }
+        if($sample['time_to_burst']){
+            list($time_to_burst_value,$time_to_burst_unit)= explode(' ',$sample['time_to_burst']);
         }
         ?>
 
@@ -234,84 +239,96 @@ else {
             <legend>Test outcomes</legend>
             <div class="form-group row mb-0">
                 <div class="form-group col-md-6">
-                    <label class="form-control-label" for="tear_strength_wrap">Mean Strength&#40;N&#41; &#40;wrap&#41;</label>
+                    <label class="form-control-label" for="mean_busting_strength">Mean Busting Strength</label>
                     <div class="input-group">
-                        <input class="form-control" type="text" id="tear_strength_wrap" name="mean_strength_wrap" placeholder="Enter Tear Strength wrap" value="<?php echo $mean_str_warp;?>" required>
+                        <input class="form-control" type="text" id="mean_busting_strength" name="mean_busting_strength" placeholder="Enter Mean Busting Strength" value="<?php echo $mean_burst_strength?>" required>
                         <span class="input-group-addon">
-                    <select id="tear_strength_unit" name="mean_strength_wrap_unit" required>
-                        <option <?php if($mean_str_warp_unit==='g') echo "selected"; ?>>g</option>
-                        <option <?php if($mean_str_warp_unit==='CN') echo "selected"; ?>>CN</option>
-                        <option <?php if($mean_str_warp_unit==='N') echo "selected"; ?>>N</option>
-                        <option <?php if($mean_str_warp_unit==='lbf') echo "selected"; ?>>lbf</option>
-                        <option <?php if($mean_str_warp_unit==='kgf') echo "selected"; ?>>kgf</option>
+                    <select id="mean_strength_unit" name="mean_busting_strength_unit" required>
+                        <option <?php if($mean_burst_strength_unit==="KiloPascals") echo "selected"; ?>>KiloPascals</option>
                     </select>
                     </span>
                     </div><!-- input-group -->
                 </div><!-- form-group -->
                 <div class="form-group col-md-4">
                     <label class="form-control-label" for="first_cv">C.V.</label>
-                    <input class="form-control" type="text" id="first_cv" name="first_cv" placeholder="Enter C.V." value="<?php echo $sample['first_cv']; ?>">
+                    <input class="form-control" type="text" id="first_cv" name="first_cv" placeholder="Enter C.V." value="<?php echo $sample['first_cv'];?>">
                 </div>
             </div>
 
             <div class="form-group row mb-0">
                 <div class="form-group col-md-6">
-                    <label class="form-control-label" for="mean_elongation_wrap">Mean Percentage Elongation &#40;wrap&#41;</label>
-                    <input class="form-control" type="text" id="mean_elongation_wrap" name="mean_percent_elongation_wrap" placeholder="Enter Mean Percentage elongation wrap" value="<?php echo $sample['mean_percent_elongation_wrap']; ?>" required>
-                </div><!-- form-group -->
-                <div class="form-group col-md-4">
-                    <label class="form-control-label" for="second_cv">C.V.</label>
-                    <input class="form-control" type="text" id="second_cv" name="second_cv" placeholder="Enter C.V." value="<?php echo $sample['sec_cv']; ?>">
-                </div>
-            </div>
-
-            <div class="form-group row mb-0">
-                <div class="form-group col-md-6">
-                    <label class="form-control-label" for="tear_strength_weft">Mean Strength&#40;N&#41; &#40;weft&#41;</label>
+                    <label class="form-control-label" for="mean_height">Mean Burst Height</label>
                     <div class="input-group">
-                        <input class="form-control" type="text" id="tear_strength_weft" name="mean_strength_weft" placeholder="Enter Tear Strength weft" value="<?php echo $mean_str_weft; ?>" required>
+                        <input class="form-control" type="text" id="mean_height" name="mean_height" placeholder="Enter Mean Height" value="<?php echo $mean_burst_height;?>" required>
                         <span class="input-group-addon">
-                    <select id="tear_strength_unit" name="mean_strength_weft_unit" required>
-                        <option <?php if($mean_str_weft_unit==='g') echo "selected"; ?>>g</option>
-                        <option <?php if($mean_str_weft_unit==='CN') echo "selected"; ?>>CN</option>
-                        <option <?php if($mean_str_weft_unit==='N') echo "selected"; ?>>N</option>
-                        <option <?php if($mean_str_weft_unit==='lbf') echo "selected"; ?>>lbf</option>
-                        <option <?php if($mean_str_weft_unit==='kgf') echo "selected"; ?>>kgf</option>
+                    <select id="mean_strength_unit" name="mean_height_unit" required>
+                        <option <?php if($mean_burst_height_unit==="mm") echo "selected"; ?>>mm</option>
                     </select>
                   </span>
                     </div><!-- input-group -->
                 </div><!-- form-group -->
                 <div class="form-group col-md-4">
-                    <label class="form-control-label" for="third_cv">C.V.</label>
-                    <input class="form-control" type="text" id="third_cv" name="third_cv" placeholder="Enter C.V." value="<?php echo $sample['third_cv']; ?>">
+                    <label class="form-control-label" for="second_cv">C.V.</label>
+                    <input class="form-control" type="text" id="second_cv" name="second_cv" placeholder="Enter C.V." value="<?php echo $sample['sec_cv'];?>">
                 </div>
             </div>
 
             <div class="form-group row mb-0">
                 <div class="form-group col-md-6">
-                    <label class="form-control-label" for="mean_percentage_elongation_weft">Mean Percentage Elongation &#40;weft&#41;</label>
-                    <input class="form-control" type="text" id="mean_percentage_elongation_weft" name="mean_percent_elongation_weft" placeholder="Enter Mean Percentage Elongation weft" value="<?php echo $sample['mean_percent_elongation_weft']; ?>" required>
+                    <label class="form-control-label" for="test_area">Test Area</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text" id="test_area" name="test_area" placeholder="Enter Test area" value="<?php echo $test_area_value;?>" required>
+                        <span style="position: relative;" class="input-group-addon">cm<span class="pow">2</span></span>
+                    </div><!-- input-group -->
+                </div><!-- form-group -->
+                <div class="form-group col-md-4">
+                    <label class="form-control-label" for="third_cv">C.V.</label>
+                    <input class="form-control" type="text" id="third_cv" name="third_cv" placeholder="Enter C.V." value="<?php echo $sample['third_cv'];?>">
+                </div>
+            </div>
+
+            <div class="form-group row mb-0">
+                <div class="form-group col-md-6">
+                    <label class="form-control-label" for="volume_increase_rate">Volume Increase Rate</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text" id="volume_increase_rate" name="volume_increase_rate" placeholder="Enter Volume Increase Rate" value="<?php echo $volume_increase_rate_value;?>" required>
+                        <span style="position: relative;" class="input-group-addon">kg/cm<span class="sec_pow">3</span></span>
+                    </div><!-- input-group -->
                 </div><!-- form-group -->
                 <div class="form-group col-md-4">
                     <label class="form-control-label" for="fourth_cv">C.V.</label>
-                    <input class="form-control" type="text" id="fourth_cv" name="fourth_cv" placeholder="Enter C.V." value="<?php echo $sample['fourth_cv']; ?>">
+                    <input class="form-control" type="text" id="fourth_cv" name="fourth_cv" placeholder="Enter C.V." value="<?php echo $sample['fourth_cv'];?>">
+                </div>
+            </div>
+
+            <div class="form-group row mb-0">
+                <div class="form-group col-md-6">
+                    <label class="form-control-label" for="time_to_burst">Time to Burst</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text" id="time_to_burst" name="time_to_burst" placeholder="Enter Time to Burst" value="<?php echo $time_to_burst_value;?>" required>
+                        <span class="input-group-addon">secs</span>
+                    </div><!-- input-group -->
+                </div><!-- form-group -->
+                <div class="form-group col-md-4">
+                    <label class="form-control-label" for="fifth_cv">C.V.</label>
+                    <input class="form-control" type="text" id="fifth_cv" name="fifth_cv" placeholder="Enter C.V." value="<?php echo $sample['fifth_cv'];?>">
                 </div>
             </div>
 
         </fieldset>
-
         <!--    Notes-->
-        <fieldset>
-            <div id="dynamicInput" class="form-group">
+        <fieldset id="dynamicInput">
+            <div class="form-group">
                 <label class="form-control-label">Condition</label>
                 <input type="text" class="form-control" name="conditions[]">
             </div>
-            <input type="button" value="Add another field" onClick="addInput('dynamicInput');">
+
         </fieldset>
+        <input type="button" value="Add another Condition" onClick="addInput('dynamicInput');">
 
         <div class="row">
             <div class="col-1 offset-md-10">
-                <button class="btn btn-primary" type="button" onclick="location.href='view_sample_detail.php?sample_id=<?php echo $sample['sample_id'];?>&test_name=tear_test';" name="cancel">Cancel</button>
+                <button class="btn btn-primary" type="button" onclick="location.href='view_sample_detail.php?sample_id=<?php echo $sample['sample_id'];?>&test_name=bursting_test';" name="cancel">Cancel</button>
             </div>
             <div class="col-1">
                 <button class="btn btn-primary" type="submit" name="submit">Submit</button>
@@ -321,30 +338,13 @@ else {
 
     </form>
 
-
 </div><!-- content container -->
+
 <footer class="footer">
     <p>&copy; <a href="http://www.ntu.edu.com" title="National textile University" target="_blank">NTU</a> | follow us on Twitter! <a href="https://twitter.com/NTUOfficial" title="Follow us on Twitter">@NTUOfficial</a>
         <br>For additional information. please visit the main or about page</p>
 </footer>
-<!--<footer id="footer">
-       <div class="container">
 
-           <div class="row">
-               <div class="col-sm-6">
-                   &copy; 2016 <a>Admission System</a>. All Rights Reserved.
-               </div>
-               <div class="col-sm-4 offset-sm-2">
-                   <ul>
-                       <li><a href="#">Home</a></li>
-                       <li><a href="#">About Us</a></li>
-                       <li><a href="#">Faq</a></li>
-                       <li><a href="#">Contact Us</a></li>
-                   </ul>
-               </div>
-           </div>
-       </div>
-   </footer><!--footer-->   -->
 
 <script src="js/jquery.slim.min.js"></script>
 <script src="js/tether.min.js"></script>

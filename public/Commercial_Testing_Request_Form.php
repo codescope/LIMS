@@ -10,6 +10,7 @@ if(isset($_GET['prev_record'])){
        $c_name = $customer['name'];
        $city = $customer['city'];
        $organization = $customer['organization'];
+       $designation = $customer['designation'];
        $phone = $customer['phone'];
        $email = $customer['email'];
        $address = $customer['address'];
@@ -18,16 +19,40 @@ if(isset($_GET['prev_record'])){
        $c_name = "";
        $city = "";
        $organization = "";
+       $designation = "";
        $phone = "";
        $email = "";
        $address = null;
    }
+}
+// prev_customer_id coming from get_previous_customer_info.php page
+elseif (isset($_GET['prev_customer'])){
+    $customer =get_customer_by_id($_GET['prev_customer']);
+    if(isset($customer)){
+        $c_name = $customer['name'];
+        $city = $customer['city'];
+        $organization = $customer['organization'];
+        $designation = $customer['designation'];
+        $phone = $customer['phone'];
+        $email = $customer['email'];
+        $address = $customer['address'];
+    }
+    else{
+        $c_name = "";
+        $city = "";
+        $organization = "";
+        $designation = "";
+        $phone = "";
+        $email = "";
+        $address = null;
+    }
 }
 else {
 //initialize customer attributes
     $c_name = "";
     $city = "";
     $organization = "";
+    $designation = "";
     $phone = "";
     $email = "";
     $address = null;
@@ -212,24 +237,24 @@ else {
                     <label for="designation">Designation *
                     </label>
                     <select id="designation" name="designation" required>
-                        <option selected value="">Choose...</option>
-                        <option value="CEO">CEO
+                        <option value="" <?php if($designation==="") echo "selected";?>>Choose...</option>
+                        <option value="CEO" <?php if($designation==="CEO") echo "selected";?>>CEO
                         </option>
-                        <option value="G.M">GM
+                        <option value="G.M" <?php if($designation==="G.M") echo "selected";?>>GM
                         </option>
-                        <option value="Manager">Manager
+                        <option value="Manager" <?php if($designation==="Manager") echo "selected";?>>Manager
                         </option>
-                        <option value="Lecturar">Lecturar
+                        <option value="Lecturar" <?php if($designation==="Lecturar") echo "selected";?>>Lecturar
                         </option>
-                        <option value="Professor">Professor
+                        <option value="Professor" <?php if($designation==="Professor") echo "selected";?>>Professor
                         </option>
-                        <option value="Q.S">QS
+                        <option value="Q.S" <?php if($designation==="Q.S") echo "selected";?>>QS
                         </option>
-                        <option value="P.M">Project Manager
+                        <option value="P.M" <?php if($designation==="P.M") echo "selected";?>>Project Manager
                         </option>
-                        <option value="Employee">Employee
+                        <option value="Employee" <?php if($designation==="Employee") echo "selected";?>>Employee
                         </option>
-                        <option value="Student">Student
+                        <option value="Student" <?php if($designation==="Student") echo "selected";?>>Student
                         </option>
                     </select>
                 </p>

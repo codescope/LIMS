@@ -7,8 +7,8 @@ $query_info = NULL;
 if(isset($_POST['sub'])){
     $type = $_POST['type'];
     $query  = "SELECT * ";
-    $query .= "FROM academic_students, samples ";
-    $query .= "WHERE academic_students.customer_id=samples.customer_id ";
+    $query .= "FROM commercial_customers, samples ";
+    $query .= "WHERE commercial_customers.customer_id=samples.customer_id ";
     $query .= "AND type='{$type}' ";
 
 
@@ -48,7 +48,7 @@ if(isset($_POST['sub'])){
 						<th>Organization</th>
 						<th>Designation</th>
 						<th>Phone</th>
-						<th>Email</th>
+						<th>Submit Test Form</th>
 						
 					</tr>
 				</thead>
@@ -62,11 +62,11 @@ if(isset($_POST['sub'])){
             $result  = $result . "<td>" . $cus['organization'] ."</td>";
             $result  = $result . "<td>" . $cus['designation'] ."</td>";
             $result  = $result . "<td>" . $cus['phone'] ."</td>";
-            $result  = $result . "<td>" . $cus['email'] ."</td>";
+            $result  = $result . "<td><a href='Commercial_Testing_Request_Form.php?prev_customer={$cus['customer_id']}'>Get Record</a></td>";
             $result  = $result . "</tr>";
         }
 //      Displaying count
-        $total_customers = "Select COUNT(*) FROM academic_students, samples WHERE academic_students.customer_id=samples.customer_id";
+        $total_customers = "Select COUNT(*) FROM commercial_customers, samples WHERE commercial_customers.customer_id=samples.customer_id";
         $total = mysqli_query($connection, $total_customers);
         confirm_query($total);
         if($count_value = mysqli_fetch_row($total)) {
@@ -83,19 +83,19 @@ if(isset($_POST['sub'])){
 					<tr>
 						<td colspan='7' >
 						<p class='show_count'>
-                        {$selected_customers} Students selected out of {$no_of_customers} </p>
+                        {$selected_customers} Customers selected out of {$no_of_customers} </p>
 							<p>For more information, Visit the <a href=\"view_sample_record.php\" target=\"_blank\">View Customer Record</a> Page.</p>
 						</td>
 					</tr>
 				</tfoot>";
     }
     elseif (mysqli_num_rows($customer_set)==0){
-        redirect_to(rawurlencode("view_academic_students.php") . "?err=" .
-            urlencode("Students Record does not exist"));
+        redirect_to(rawurlencode("get_previous_customer_info.php") . "?err=" .
+            urlencode("Customers Record does not exist"));
     }
     else {
-        redirect_to(rawurlencode("view_academic_students.php") . "?err=" .
-            urlencode("Students Record does not exist"));
+        redirect_to(rawurlencode("get_previous_customer_info.php") . "?err=" .
+            urlencode("Customers Record does not exist"));
     }
 
 
@@ -111,7 +111,7 @@ if(isset($_POST['sub'])){
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title>Academic Students Record</title>
+        <title>Commercial Customers Record</title>
         <link rel="stylesheet" type="text/css" href="css/css_table_design.css">
         <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
         <script type="text/javascript" src="js/jquery.tablesorter.js"></script>
@@ -119,18 +119,19 @@ if(isset($_POST['sub'])){
     </head>
     <body>
     <header>
-        <h1>Academic Students Record</h1>
+        <h1>Commercial Customers Record</h1>
     </header>
     <article>
-        <h2>Select the option to filter the academic students</h2>
-        <marquee>This list contains the record of academic students</marquee>
+        <h2>Select the option to filter the commercial and academic-commercial customers</h2>
+        <marquee>This list contains the record of commercial or academic customers depending upon selected customer types</marquee>
         <div id="first_block">
-            <form id="first_form" action="view_academic_students.php" method="post">
+            <form id="first_form" action="get_previous_customer_info.php" method="post">
                 <p>
                     <label for="uni_sel">Select Customers</label>
                     <select id="uni_sel" name="type" required>
-                        <option value="academic" selected>Academic</option>
-
+                        <option value="" selected>Select Customer Type</option>
+                        <option value="commercial">Commercial</option>
+                        <option value="academic commercial" >Academic Commercial</option>
                     </select>
 
                     <label for="uni_list">Select Quantity</label>

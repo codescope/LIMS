@@ -6,7 +6,7 @@
 
 	function mysql_prep($string) {
 		global $connection;
-		
+        $string = trim($string);
 		$escaped_string = mysqli_real_escape_string($connection, $string);
 		return $escaped_string;
 	}
@@ -52,6 +52,42 @@
         }
         else null;
 
+    }
+    function get_crocking_test_by_id($sample_id) {
+        global $connection;
+
+        $safe_sample_id = mysqli_real_escape_string($connection, $sample_id);
+
+        $query  = "SELECT * ";
+        $query .= "FROM color_fastness_to_crocking, samples ";
+        $query .= "WHERE color_fastness_to_crocking.sample_id=samples.sample_id ";
+        $query .= "AND color_fastness_to_crocking.sample_id='{$safe_sample_id}' AND color_fastness_to_crocking.status= 'pending' ";
+        $query .= "LIMIT 1";
+        $sample_set = mysqli_query($connection, $query);
+        confirm_query($sample_set);
+        if($sample = mysqli_fetch_assoc($sample_set)) {
+            return $sample;
+        } else {
+            return null;
+        }
+    }
+    function get_bursting_test_by_id($sample_id) {
+        global $connection;
+
+        $safe_sample_id = mysqli_real_escape_string($connection, $sample_id);
+
+        $query  = "SELECT * ";
+        $query .= "FROM bursting_properties_of_fabrics, samples ";
+        $query .= "WHERE bursting_properties_of_fabrics.sample_id=samples.sample_id ";
+        $query .= "AND bursting_properties_of_fabrics.sample_id='{$safe_sample_id}' AND bursting_properties_of_fabrics.status= 'pending' ";
+        $query .= "LIMIT 1";
+        $sample_set = mysqli_query($connection, $query);
+        confirm_query($sample_set);
+        if($sample = mysqli_fetch_assoc($sample_set)) {
+            return $sample;
+        } else {
+            return null;
+        }
     }
     function get_tear_test_by_id($sample_id) {
         global $connection;

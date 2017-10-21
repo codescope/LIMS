@@ -277,7 +277,7 @@ else {
         <div class="form-group row mb-0">
             <div class="form-group col-md-6">
                   <label class="form-control-label" for="mean_percentage_elongation_weft">Mean Percentage Elongation &#40;weft&#41;</label>
-                  <input class="form-control" type="text" id="mean_percentage_elongation_weft" name="mean_percentage_elongation_weft" placeholder="Enter Mean Percentage Elongation weft" required>
+                  <input class="form-control" type="text" id="mean_percentage_elongation_weft" name="mean_percent_elongation_weft" placeholder="Enter Mean Percentage Elongation weft" required>
             </div><!-- form-group -->
             <div class="form-group col-md-4">
               <label class="form-control-label" for="fourth_cv">C.V.</label>
@@ -297,7 +297,7 @@ else {
 
     <div class="row">
         <div class="col-1 offset-md-10">
-            <button class="btn btn-primary" onclick="location.href='lab_manager.php';" name="cancel">Cancel</button>
+            <button class="btn btn-primary" type="button" onclick="location.href='pending_samples.php';" name="cancel">Cancel</button>
         </div>
         <div class="col-1">
             <button class="btn btn-primary" type="submit" name="submit">Submit</button>

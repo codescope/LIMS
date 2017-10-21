@@ -227,11 +227,15 @@ else {
             </div>
         </fieldset>
         <?php
-        if($sample['mean_stength-wrap']){
-           list($mean_str_warp,$mean_str_warp_unit)= explode(' ',$sample['mean_strength_wrap']);
+        if(isset($sample['mean_strength_wrap'])){
+            $mean_strength_warp_value = explode(' ',$sample['mean_strength_wrap']);
+            $mean_str_warp = $mean_strength_warp_value[0];
+            $mean_str_warp_unit = $mean_strength_warp_value[1];
         }
-        if($sample['mean_stength-weft']){
-            list($mean_str_weft,$mean_str_weft_unit)= explode(' ',$sample['mean_strength_weft']);
+        if(isset($sample['mean_strength_weft'])){
+            $mean_strength_weft_value = explode(' ',$sample['mean_strength_weft']);
+            $mean_str_weft = $mean_strength_weft_value[0];
+            $mean_str_weft_unit = $mean_strength_weft_value[1];
         }
         ?>
         <fieldset class="form-group mb-0">
@@ -311,7 +315,7 @@ else {
 
         <div class="row">
             <div class="col-1 offset-md-10">
-                <button class="btn btn-primary" type="submit" onclick="location.href='view_sample_detail.php?sample_id=<?php echo $sample['sample_id'];?>&test_name=tensile_test';" name="cancel">Cancel</button>
+                <button class="btn btn-primary" type="button" onclick="location.href='view_sample_detail.php?sample_id=<?php echo $sample['sample_id'];?>&test_name=tensile_test';" name="cancel">Cancel</button>
             </div>
             <div class="col-1">
                 <button class="btn btn-primary" type="submit" name="submit">Submit</button>

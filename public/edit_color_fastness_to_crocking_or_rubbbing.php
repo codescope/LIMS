@@ -4,7 +4,7 @@
 <?php require_once("../includes/validation_functions.php"); ?>
 <?php
 if(isset($_GET['sample_id'])) {
-    $sample = get_tensile_test_by_id($_GET['sample_id']);
+    $sample = get_crocking_test_by_id($_GET['sample_id']);
     if (!$sample) {
         redirect_to("lab_manager.php");
     }
@@ -35,7 +35,7 @@ elseif (isset($_POST['submit'])) {
         $sample_id=$sample['sample_id'];
         $sample_type=$sample['sample_type'];
         $sample_description = mysql_prep($_POST["sample_description"]);
-        $test_standard = mysql_prep($_POST["test_standard"]);
+        $test_standard = mysql_prep(htmlentities($_POST["test_standard"]));
         $temperature = mysql_prep($_POST["temperature"]);
         $humidity = mysql_prep($_POST["humidity"]);
         $dry = mysql_prep($_POST["dry"]);
@@ -69,7 +69,7 @@ elseif (isset($_POST['submit'])) {
         }
 
 
-        $query  = "UPDATE color_fastness_to_crocking (";
+        $query  = "UPDATE color_fastness_to_crocking ";
         $query .= "SET status='pending', sample_description='{$sample_description}', test_standard='{$test_standard}', temperature='{$temperature}', humidity='{$humidity}', dry='{$dry}', wet='{$wet}', first_cv='{$first_cv}', second_cv='{$second_cv}', test_conditions='{$test_conditions}' ";
         $query .= "WHERE sample_id='{$sample_id}' LIMIT 1";
         $result = mysqli_query($connection, $query);
@@ -128,6 +128,8 @@ else {
 
     </div><!-- container -->
 </nav>
+<?php echo message(); ?>
+<?php echo form_errors($errors); ?>
 
 <div class="container mt-4">
 
@@ -140,7 +142,7 @@ else {
             <div class="form-group row mb-0">
                 <div class="form-group col-6">
                     <label class="form-control-label sr-only" for="id">Sample ID</label>
-                    <input class="form-control" type="text" id="id" name="id" placeholder="Enter Sample ID" value="<?php echo $sample['sample_id']; ?>" readonly>
+                    <input class="form-control" type="text" id="id" name="sample_id" placeholder="Enter Sample ID" value="<?php echo $sample['sample_id']; ?>" readonly>
                 </div><!-- form-group -->
                 <div class="form-group col-6">
                     <label class="form-control-label sr-only" for="sample_type">Sample Type</label>
@@ -260,7 +262,7 @@ else {
 
         <div class="row">
             <div class="col-1 offset-md-10">
-                <button class="btn btn-primary" onclick="location.href='view_sample_detail.php?sample_id=<?php echo $sample['sample_id'];?>&test_name=crocking_test';" name="cancel">Cancel</button>
+                <button class="btn btn-primary" type="button" onclick="location.href='view_sample_detail.php?sample_id=<?php echo $sample['sample_id'];?>&test_name=crocking_test';" name="cancel">Cancel</button>
             </div>
             <div class="col-1">
                 <button class="btn btn-primary" type="submit" name="submit">Submit</button>

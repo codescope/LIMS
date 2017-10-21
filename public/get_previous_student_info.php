@@ -48,7 +48,7 @@ if(isset($_POST['sub'])){
 						<th>Organization</th>
 						<th>Designation</th>
 						<th>Phone</th>
-						<th>Email</th>
+						<th>Submit Test Form</th>
 						
 					</tr>
 				</thead>
@@ -62,7 +62,7 @@ if(isset($_POST['sub'])){
             $result  = $result . "<td>" . $cus['organization'] ."</td>";
             $result  = $result . "<td>" . $cus['designation'] ."</td>";
             $result  = $result . "<td>" . $cus['phone'] ."</td>";
-            $result  = $result . "<td>" . $cus['email'] ."</td>";
+            $result  = $result . "<td><a href='Academic_Testing_Request_Form.php?prev_customer={$cus['customer_id']}'>Get Record</a></td>";
             $result  = $result . "</tr>";
         }
 //      Displaying count
@@ -90,11 +90,11 @@ if(isset($_POST['sub'])){
 				</tfoot>";
     }
     elseif (mysqli_num_rows($customer_set)==0){
-        redirect_to(rawurlencode("view_academic_students.php") . "?err=" .
+        redirect_to(rawurlencode("get_previous_student_info.php") . "?err=" .
             urlencode("Students Record does not exist"));
     }
     else {
-        redirect_to(rawurlencode("view_academic_students.php") . "?err=" .
+        redirect_to(rawurlencode("get_previous_student_info.php") . "?err=" .
             urlencode("Students Record does not exist"));
     }
 
@@ -125,12 +125,11 @@ if(isset($_POST['sub'])){
         <h2>Select the option to filter the academic students</h2>
         <marquee>This list contains the record of academic students</marquee>
         <div id="first_block">
-            <form id="first_form" action="view_academic_students.php" method="post">
+            <form id="first_form" action="get_previous_student_info.php" method="post">
                 <p>
                     <label for="uni_sel">Select Customers</label>
                     <select id="uni_sel" name="type" required>
                         <option value="academic" selected>Academic</option>
-
                     </select>
 
                     <label for="uni_list">Select Quantity</label>

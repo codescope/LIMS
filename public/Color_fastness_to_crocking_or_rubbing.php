@@ -34,7 +34,7 @@ elseif (isset($_POST['submit'])) {
         $sample_id=mysql_prep($_POST["sample_id"]);
         $sample_type=mysql_prep($_POST["sample_type"]);
         $sample_description = mysql_prep($_POST["sample_description"]);
-        $test_standard = mysql_prep($_POST["test_standard"]);
+        $test_standard = mysql_prep(htmlentities($_POST["test_standard"]));
         $temperature = mysql_prep($_POST["temperature"]);
         $humidity = mysql_prep($_POST["humidity"]);
         $dry = mysql_prep($_POST["dry"]);
@@ -44,7 +44,7 @@ elseif (isset($_POST['submit'])) {
         $conditions = $_POST["conditions"];
 
         $test_conditions="";
-        if($test_standard=="ISO 105&times;12 2002"){
+        if($test_standard==="ISO 105&times;12 2002"){
             $test_conditions = "Rubbing finger, 16mm diameter, downward force 9&#177;0.2 N, warp direction";
         }
         elseif ($test_standard=="AATCC 08 2016"){
@@ -123,6 +123,8 @@ else {
 
   </div><!-- container -->
 </nav>
+<?php echo message(); ?>
+<?php echo form_errors($errors); ?>
 
 <div class="container mt-4">
 
@@ -135,7 +137,7 @@ else {
     <div class="form-group row mb-0">
         <div class="form-group col-6">
               <label class="form-control-label sr-only" for="id">Sample ID</label>
-              <input class="form-control" type="text" id="id" name="id" placeholder="Enter Sample ID">
+              <input class="form-control" type="text" id="id" name="sample_id" placeholder="Enter Sample ID">
         </div><!-- form-group -->
         <div class="form-group col-6">
           <label class="form-control-label sr-only" for="sample_type">Sample Type</label>
@@ -266,7 +268,7 @@ else {
 
     <div class="row">
         <div class="col-1 offset-md-10">
-            <button class="btn btn-primary" onclick="location.href='lab_manager.php';" name="cancel">Cancel</button>
+            <button class="btn btn-primary" type="button" onclick="location.href='pending_samples.php';" name="cancel">Cancel</button>
         </div>
         <div class="col-1">
             <button class="btn btn-primary" type="submit" name="submit">Submit</button>

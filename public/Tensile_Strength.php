@@ -299,7 +299,7 @@ else {
     
     <div class="row">
         <div class="col-1 offset-md-10">
-            <button class="btn btn-primary" onclick="location.href='lab_manager.php';" name="cancel">Cancel</button>
+            <button class="btn btn-primary" onclick="location.href='pending_samples.php';" name="cancel">Cancel</button>
         </div>
         <div class="col-1">
          <button class="btn btn-primary" type="submit" name="submit">Submit</button>

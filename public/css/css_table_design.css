@@ -121,8 +121,9 @@ table#customers tbody td span { display: none; }
 table#customers tbody td:first-child { font-weight: 700; }
 table#customers tbody td:last-child { text-align: center; }
 table#customers tbody td::after { content:''; display: block; clear: both; }
-
-
+ /*changing css propertes of anchor tag in last column*/
+table#customers tbody td:last-child a { text-decoration: none;}
+table#customers tbody td:last-child a:hover {color:#e79300;;text-decoration: underline;}
 
 table#customers tfoot{font-size: 0.8em;}
 table#customers tfoot tr{border-top: 2px solid #e79300;}
@@ -130,12 +131,14 @@ table#customers tfoot td{
     color: #000;
     font-size: 1.2em;
     font-weight:600;
-    height: 17px;
     position: relative;
     left: 30%;
-    padding-top: 10px;
     padding-right: 40px;
-    
+}
+table#customers tfoot td p.show_count{
+    margin-bottom: 0;
+    position: relative;
+    left: 8.5%;
 }
 table#customers tfoot a{color:cornflowerblue;text-decoration: none;}
 table#customers tfoot a:hover{color:#3df;text-decoration: underline;}
