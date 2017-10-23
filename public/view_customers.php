@@ -5,7 +5,12 @@
 $result = NULL;
 $query_info = NULL;
 if(isset($_POST['sub'])){
+    // Initializing variables to use in reporting form at the bottom of the page
     $type = $_POST['type'];
+    $starting_date = "";
+    $ending_date = "";
+    $quantity = "";
+
     $query  = "SELECT * ";
     $query .= "FROM commercial_customers, samples ";
     $query .= "WHERE commercial_customers.customer_id=samples.customer_id ";
@@ -34,7 +39,7 @@ if(isset($_POST['sub'])){
             $query .= "LIMIT {$quantity}";
         }
     }
-    $query_info = "Result: " . strstr($query,"type");
+    $query_info = "<b>Result:</b> " . strstr($query,"type");
     $customer_set = mysqli_query($connection, $query);
     confirm_query($customer_set);
     if(mysqli_num_rows($customer_set)>0) {
@@ -166,15 +171,24 @@ if(isset($_POST['sub'])){
 
     </div>
     <?php
-    if($query_info){
-        echo "<div style='margin-bottom: 30px; text-align: center; font-size: 18px;'>{$query_info}</div>";
+        if($query_info){
+            echo "<div style='margin-bottom: 15px; text-align: center; font-size: 18px;'>{$query_info}</div>";
+        }
+        if($result){
+            echo $result;
+    ?>
+     <form id="second_form" action="generate_commercial_customers_report.php" method="post">
+         <input type="hidden" name="type" value="<?php echo $type;?>">
+         <input type="hidden" name="quantity" value="<?php echo $quantity; ?>">
+         <input type="hidden" name="starting_date" value="<?php echo $starting_date;?>">
+         <input type="hidden" name="ending_date" value="<?php echo $ending_date;?>">
+         <input type="submit" name="generate_report" id="generate_report" value="Generate Report">
+     </form>
+     <?php
     }
-    if($result){
-        echo $result;
-    }
-    if(isset($_GET['err'])){
-        echo "<div class=message>" . $_GET['err'] . "</div>";
-    }
+        if(isset($_GET['err'])){
+            echo "<div class=message>" . $_GET['err'] . "</div>";
+        }
     ?>
 
 </article>

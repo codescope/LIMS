@@ -8,6 +8,7 @@ if(isset($_GET['customer_id'])){
     $customer =get_customer_by_id($_GET['customer_id']);
     if(!$customer){
         $_SESSION["message"] = "Customer ID doesn't exist.";
+        redirect_to("view_sample_record.php");
     }
     // now gather the name of tests of this sample in string
     if(isset($customer)){
@@ -21,6 +22,7 @@ elseif(isset($_POST['customer_id'])){
     $customer =get_customer_by_id($_POST['customer_id']);
     if(!$customer){
         $_SESSION["message"] = "Customer ID doesn't exist.";
+        redirect_to("view_sample_record.php");
     }
     // now gather the name of tests of this sample in string
     if(isset($customer)){
@@ -32,6 +34,7 @@ elseif(isset($_POST['customer_id'])){
 }
 else{
     $_SESSION["message"] = "Search by Customer ID to find the sample details";
+    redirect_to("view_sample_record.php");
 }
 class PDF extends FPDF{
  function Header(){
